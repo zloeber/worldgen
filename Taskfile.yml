@@ -20,7 +20,7 @@ tasks:
       - mise x -- patternmaker --help
 
   check:
-    desc: Validate the project charter and proposal files exist and the tool config loads
+    desc: Validate core project files and config load
     cmds:
       - python - <<'PY'
         import pathlib, tomllib
@@ -33,9 +33,16 @@ tasks:
             'README.md',
             'docs/charter.md',
             'docs/architecture/personal-world-poc.md',
+            'docs/data-contract-v1.md',
+            'docs/development/adr-0001-world-foundation-decisions.md',
         ]:
             path = pathlib.Path(relpath)
             assert path.exists(), f'missing {relpath}'
             print(f'ok {relpath}')
         print('project config ok')
         PY
+
+  test:
+    desc: Run milestone 1 synthetic fixture tests
+    cmds:
+      - PYTHONPATH=src python -m pytest

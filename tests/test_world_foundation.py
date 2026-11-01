@@ -7,6 +7,7 @@ from pathlib import Path
 from worldgen.contracts import validate_world
 from worldgen.indexer import rebuild_index
 from worldgen.ingest import ingest_source
+from worldgen.interop import canonical_to_jsonld, jsonld_to_canonical
 from worldgen.proposals import generate_domain_proposals
 from worldgen.world import init_world
 
@@ -146,3 +147,36 @@ def test_validation_detects_malformed_records(tmp_path: Path) -> None:
     )
     errors = validate_world(world_path)
     assert any("missing required field" in error.message for error in errors)
+
+
+def test_jsonld_round_trip_and_index_rebuild(tmp_path: Path) -> None:
+    world_path = tmp_path / "world"
+    init_world(world_path, name="Fixture World", description="Synthetic data world")
+    ingest_source(
+        world_path,
+        source_type="chatgpt_export",
+        source_name="chatgpt-fixture",
+        source_path=FIXTURES / "chatgpt_export",
+        origin="fixture://chatgpt",
+    )
+    ingest_source(
+        world_path,
+        source_type="markdown_repo",
+        source_name="hermes-fixture",
+        source_path=FIXTURES / "hermes_repo",
+        origin="fixture://hermes",
+    )
+    jsonld_doc = canonical_to_jsonld(world_path)
+    assert "@context" in jsonld_doc
+    assert jsonld_doc["@graph"]
+    round_tripped = jsonld_to_canonical(jsonld_doc)
+    assert round_tripped
+    assert all(item["id"] for item in round_tripped)
+    db_path = rebuild_index(world_path)
+    assert db_path.exists()
+    conn = sqlite3.connect(db_path)
+    try:
+        count = conn.execute("SELECT COUNT(*) FROM records").fetchone()[0]
+    finally:
+        conn.close()
+    assert count >= 1

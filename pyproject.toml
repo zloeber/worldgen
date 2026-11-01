@@ -4,7 +4,9 @@ version = "0.1.0"
 description = "Local-first world package prototype"
 readme = "README.md"
 requires-python = ">=3.12"
-dependencies = []
+dependencies = [
+  "jsonschema>=4.23.0",
+]
 
 [project.scripts]
 worldgen = "worldgen.cli:main"

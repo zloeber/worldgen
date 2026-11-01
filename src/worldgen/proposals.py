@@ -17,6 +17,10 @@ def _load_relationships(world_path: Path) -> list[dict]:
     return [read_json(path) for path in sorted((world_path / "relationships").glob("*.json"))]
 
 
+def _load_evidence(world_path: Path) -> list[dict]:
+    return [read_json(path) for path in sorted((world_path / "evidence").glob("*.json"))]
+
+
 def generate_domain_proposals(world_path: Path) -> list[str]:
     proposal_ids = []
     proposal_ids.append(_proposal_by_token_frequency(world_path))
@@ -26,6 +30,8 @@ def generate_domain_proposals(world_path: Path) -> list[str]:
 
 def _proposal_by_token_frequency(world_path: Path) -> str:
     entities = _load_entities(world_path)
+    evidence = _load_evidence(world_path)
+    evidence_by_id = {item["id"]: item for item in evidence}
     token_counter: Counter[str] = Counter()
     domain_members: dict[str, list[str]] = defaultdict(list)
     for entity in entities:
@@ -35,9 +41,28 @@ def _proposal_by_token_frequency(world_path: Path) -> str:
             token_counter[token] += 1
             domain_members[token].append(entity["id"])
     top_tokens = [token for token, count in token_counter.most_common(5) if count > 1]
+    candidate_evidence = [
+        evidence_id
+        for evidence in evidence
+        for evidence_id in [evidence["id"]]
+        if evidence.get("source_id")
+    ]
     body = {
         "candidate_domains": [
-            {"domain": token, "entity_ids": sorted(set(domain_members[token]))} for token in top_tokens
+            {
+                "domain": token,
+                "entity_ids": sorted(set(domain_members[token])),
+                "included_entities": sorted(set(domain_members[token])),
+                "supporting_relationships": [],
+                "supporting_evidence": [
+                    evidence_id for evidence_id in candidate_evidence[:1] if evidence_id in evidence_by_id
+                ],
+                "source_distribution": {"total_sources": len({item["source_id"] for item in evidence})},
+                "ambiguous_or_excluded_entities": [],
+                "overlapping_memberships": [],
+                "alternative_organizational_interpretations": [],
+            }
+            for token in top_tokens
         ]
     }
     proposal_id = stable_id("proposal", "domain", "token-frequency", str(top_tokens))
@@ -52,7 +77,7 @@ def _proposal_by_token_frequency(world_path: Path) -> str:
             "title": "Candidate conceptual domains from token frequency",
             "proposal_type": "organizational_structure",
             "approach": "token_frequency",
-            "evidence_ids": [],
+            "evidence_ids": candidate_evidence[:1],
             "body": body,
         },
     )
@@ -62,6 +87,7 @@ def _proposal_by_token_frequency(world_path: Path) -> str:
 def _proposal_by_connected_components(world_path: Path) -> str:
     entities = _load_entities(world_path)
     relationships = _load_relationships(world_path)
+    evidence = _load_evidence(world_path)
     graph: dict[str, set[str]] = {entity["id"]: set() for entity in entities}
     for rel in relationships:
         graph.setdefault(rel["from_entity_id"], set()).add(rel["to_entity_id"])
@@ -82,6 +108,7 @@ def _proposal_by_connected_components(world_path: Path) -> str:
             stack.extend(sorted(graph.get(current, set()) - visited))
         if component:
             components.append(sorted(component))
+    evidence_ids = [item["id"] for item in evidence[:3]]
     proposal_id = stable_id("proposal", "domain", "connected-components", str(components))
     write_json(
         world_path / "proposals" / f"{proposal_id}.json",
@@ -94,8 +121,17 @@ def _proposal_by_connected_components(world_path: Path) -> str:
             "title": "Candidate conceptual domains from relationship communities",
             "proposal_type": "organizational_structure",
             "approach": "connected_components",
-            "evidence_ids": [],
-            "body": {"candidate_domains": components},
+            "evidence_ids": evidence_ids,
+            "body": {
+                "candidate_domains": components,
+                "included_entities": [entity_id for component in components for entity_id in component],
+                "supporting_relationships": [rel["id"] for rel in relationships],
+                "supporting_evidence": evidence_ids,
+                "source_distribution": {"total_sources": len({item["source_id"] for item in evidence})},
+                "ambiguous_or_excluded_entities": [],
+                "overlapping_memberships": [],
+                "alternative_organizational_interpretations": [],
+            },
         },
     )
     return proposal_id

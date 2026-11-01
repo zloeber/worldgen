@@ -31,6 +31,9 @@ CREATE TABLE assertions (
   predicate TEXT NOT NULL,
   object_text TEXT NOT NULL,
   status TEXT NOT NULL,
+  interpretation_level TEXT NOT NULL,
+  confidence REAL NOT NULL,
+  source_id TEXT,
   conflicts_with_json TEXT NOT NULL
 );
 
@@ -88,13 +91,16 @@ def rebuild_index(world_path: Path) -> Path:
                 import json
 
                 conn.execute(
-                    "INSERT OR REPLACE INTO assertions (id, subject_entity_id, predicate, object_text, status, conflicts_with_json) VALUES (?, ?, ?, ?, ?, ?)",
+                    "INSERT OR REPLACE INTO assertions (id, subject_entity_id, predicate, object_text, status, interpretation_level, confidence, source_id, conflicts_with_json) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)",
                     (
                         record["id"],
                         record["subject_entity_id"],
                         record["predicate"],
                         record["object_text"],
                         record["status"],
+                        record.get("interpretation_level", "source_claim"),
+                        float(record.get("confidence", 0.0)),
+                        record.get("source_id"),
                         json.dumps(record.get("conflicts_with", []), sort_keys=True),
                     ),
                 )

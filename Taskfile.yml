@@ -1,0 +1,41 @@
+version: '3'
+
+tasks:
+  default:
+    desc: Show the available project tasks
+    cmds:
+      - task --list
+
+  setup:
+    desc: Install the pinned project toolchain via mise
+    cmds:
+      - mise install
+      - mise x -- python --version
+      - mise x -- uv --version
+      - mise x -- task --version
+
+  patternmap:
+    desc: Optional local pattern mapping using patternmaker
+    cmds:
+      - mise x -- patternmaker --help
+
+  check:
+    desc: Validate the project charter and proposal files exist and the tool config loads
+    cmds:
+      - python - <<'PY'
+        import pathlib, tomllib
+
+        assert pathlib.Path('.mise.toml').exists()
+        with open('.mise.toml', 'rb') as fh:
+            tomllib.load(fh)
+
+        for relpath in [
+            'README.md',
+            'docs/charter.md',
+            'docs/architecture/personal-world-poc.md',
+        ]:
+            path = pathlib.Path(relpath)
+            assert path.exists(), f'missing {relpath}'
+            print(f'ok {relpath}')
+        print('project config ok')
+        PY

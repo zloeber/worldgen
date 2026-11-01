@@ -201,7 +201,14 @@ def ingest_source(
     source_name: str,
     source_path: Path,
     origin: str,
-) -> dict[str, int] | None:
+) -> dict[str, int | str] | None:
+    extractors: dict[str, Callable[[Path], list]] = {
+        "chatgpt_export": extract_chatgpt_observations,
+        "markdown_repo": extract_markdown_repo_observations,
+    }
+    if source_type not in extractors:
+        raise ValueError(f"unsupported source_type: {source_type}")
+
     source_hash = file_hash(source_path)
     source_id = stable_id("source", source_type, source_name, origin)
     manifest_path = world_path / "sources" / "manifests" / f"{source_id}.json"
@@ -236,10 +243,6 @@ def ingest_source(
     raw_target = world_path / "sources" / "raw" / source_id
     _copy_raw_source(source_path, raw_target)
 
-    extractors: dict[str, Callable[[Path], list]] = {
-        "chatgpt_export": extract_chatgpt_observations,
-        "markdown_repo": extract_markdown_repo_observations,
-    }
     extractor = extractors[source_type]
     observations = extractor(source_path)
     counts = _ingest_observations(world_path, source_id, observations)
@@ -254,4 +257,8 @@ def ingest_source(
             **counts,
         },
     )
-    return counts
+    return {
+        **counts,
+        "source_id": source_id,
+        "content_hash": source_hash,
+    }

@@ -95,6 +95,8 @@ def _check_referential_integrity(records_by_id: dict[str, dict], path: Path) -> 
 
 
 def validate_world(world_path: Path) -> list[ValidationError]:
+    from .recipes import validate_recipe_catalog
+
     errors: list[ValidationError] = []
     required_paths = [
         world_path / "world.json",
@@ -106,6 +108,8 @@ def validate_world(world_path: Path) -> list[ValidationError]:
         world_path / "assertions",
         world_path / "evidence",
         world_path / "proposals",
+        world_path / "recipes" / "definitions",
+        world_path / "recipes" / "executions",
         world_path / "indexes" / "sqlite",
     ]
     for required in required_paths:
@@ -118,6 +122,10 @@ def validate_world(world_path: Path) -> list[ValidationError]:
         if rel.parts[:2] == ("indexes", "sqlite"):
             continue
         if rel.parts[:2] == ("sources", "raw"):
+            continue
+        if rel.parts[:2] == ("recipes", "definitions"):
+            continue
+        if rel.parts[:2] == ("recipes", "executions"):
             continue
         try:
             record = read_json(json_file)
@@ -133,5 +141,7 @@ def validate_world(world_path: Path) -> list[ValidationError]:
                 errors.append(ValidationError(path=json_file, message=f"duplicate record id: {record_id}"))
             records_by_id[record_id] = record
         errors.extend(validate_record(record, json_file))
+    for recipe_error in validate_recipe_catalog(world_path):
+        errors.append(ValidationError(path=world_path / "recipes", message=recipe_error))
     errors.extend(_check_referential_integrity(records_by_id, world_path / "world.json"))
     return errors

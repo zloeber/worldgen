@@ -56,6 +56,8 @@ def _entity_record(world_path: Path, label: str, source_id: str) -> str:
                 "normalized_label": normalized,
                 "aliases": [],
                 "source_ids": [source_id],
+                "canonical_entity_id": None,
+                "identity_proposal_ids": [],
             },
         )
     else:
@@ -152,7 +154,9 @@ def _ingest_observations(
                         "from_entity_id": entity_ids[0],
                         "to_entity_id": entity_ids[1],
                         "relationship_type": "co_mentioned",
+                        "relationship_basis": "co_occurrence",
                         "evidence_ids": [evidence_id],
+                        "confidence": 0.5,
                     },
                 )
                 counts["relationships"] += 1
@@ -179,7 +183,11 @@ def _ingest_observations(
                 "object_text": object_text,
                 "evidence_ids": [evidence_id],
                 "interpretation_level": "source_claim",
+                "confidence": 0.7,
+                "source_id": source_id,
                 "conflicts_with": sorted(conflict_ids),
+                "valid_from": obs.observed_at,
+                "valid_until": None,
             }
             write_json(assertion_path, payload)
             assertion_index.setdefault((subject_id, "is"), []).append((assertion_id, object_text, status))

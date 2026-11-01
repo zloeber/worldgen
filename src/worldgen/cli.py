@@ -9,6 +9,7 @@ from .contracts import validate_world
 from .indexer import rebuild_index
 from .ingest import ingest_source
 from .proposals import generate_domain_proposals
+from .recipes import compose_workflow, list_execution_history, recipe_catalog_by_id, run_recipe
 from .world import init_world
 
 
@@ -107,6 +108,68 @@ def _cmd_review(args: argparse.Namespace) -> int:
     return 0
 
 
+def _cmd_recipe_list(args: argparse.Namespace) -> int:
+    catalog = recipe_catalog_by_id(Path(args.path))
+    payload = [
+        {
+            "id": item["id"],
+            "version": item["version"],
+            "name": item["name"],
+            "implementation_status": item["implementation_status"],
+            "depends_on": item["depends_on"],
+        }
+        for item in sorted(catalog.values(), key=lambda x: x["id"])
+    ]
+    print(json.dumps(payload, indent=2, sort_keys=True))
+    return 0
+
+
+def _cmd_recipe_run(args: argparse.Namespace) -> int:
+    workflow = [args.recipe_id]
+    if args.include_dependencies:
+        workflow = compose_workflow(Path(args.path), [args.recipe_id])
+    input_payload = {}
+    if args.inputs_json:
+        input_payload = json.loads(args.inputs_json)
+    executions = []
+    for recipe_id in workflow:
+        execution = run_recipe(Path(args.path), recipe_id=recipe_id, inputs=input_payload if recipe_id == args.recipe_id else {})
+        executions.append(
+            {
+                "recipe_id": execution["recipe_id"],
+                "recipe_version": execution["recipe_version"],
+                "execution_id": execution["execution_id"],
+                "status": execution["status"],
+                "execution_path": execution["execution_path"],
+            }
+        )
+    print(json.dumps(executions, indent=2, sort_keys=True))
+    return 0
+
+
+def _cmd_recipe_history(args: argparse.Namespace) -> int:
+    history = list_execution_history(Path(args.path))
+    payload = [
+        {
+            "execution_id": item["execution_id"],
+            "recipe_id": item["recipe_id"],
+            "recipe_version": item["recipe_version"],
+            "status": item["status"],
+            "started_at": item["started_at"],
+            "completed_at": item["completed_at"],
+        }
+        for item in history
+    ]
+    print(json.dumps(payload, indent=2, sort_keys=True))
+    return 0
+
+
+def _cmd_recipe_compose(args: argparse.Namespace) -> int:
+    order = compose_workflow(Path(args.path), args.recipe_ids)
+    print(json.dumps(order, indent=2))
+    return 0
+
+
 def build_parser() -> argparse.ArgumentParser:
     parser = argparse.ArgumentParser(prog="worldgen")
     sub = parser.add_subparsers(dest="command", required=True)
@@ -146,6 +209,29 @@ def build_parser() -> argparse.ArgumentParser:
     review_p.add_argument("path")
     review_p.add_argument("topic", choices=["proposals", "conflicts"])
     review_p.set_defaults(func=_cmd_review)
+
+    recipe_p = sub.add_parser("recipe")
+    recipe_sub = recipe_p.add_subparsers(dest="recipe_command", required=True)
+
+    recipe_list_p = recipe_sub.add_parser("list")
+    recipe_list_p.add_argument("path")
+    recipe_list_p.set_defaults(func=_cmd_recipe_list)
+
+    recipe_run_p = recipe_sub.add_parser("run")
+    recipe_run_p.add_argument("path")
+    recipe_run_p.add_argument("recipe_id")
+    recipe_run_p.add_argument("--inputs-json", default="{}")
+    recipe_run_p.add_argument("--include-dependencies", action="store_true")
+    recipe_run_p.set_defaults(func=_cmd_recipe_run)
+
+    recipe_history_p = recipe_sub.add_parser("history")
+    recipe_history_p.add_argument("path")
+    recipe_history_p.set_defaults(func=_cmd_recipe_history)
+
+    recipe_compose_p = recipe_sub.add_parser("compose")
+    recipe_compose_p.add_argument("path")
+    recipe_compose_p.add_argument("recipe_ids", nargs="+")
+    recipe_compose_p.set_defaults(func=_cmd_recipe_compose)
 
     return parser
 

@@ -8,6 +8,7 @@ Milestone 1 now includes a functioning local-first prototype that can initialize
 - `docs/architecture/personal-world-poc.md`
 - `docs/development/adr-0001-world-foundation-decisions.md`
 - `docs/data-contract-v1.md`
+- `docs/world-development-recipes.md`
 
 ## Implementation highlights
 
@@ -23,6 +24,8 @@ Milestone 1 now includes a functioning local-first prototype that can initialize
   - token-frequency conceptual domains
   - relationship connected components
 - CLI commands for init, ingest, validate, index, propose, and explore.
+- First-class filesystem-native recipe definitions and execution history (`recipes/definitions`, `recipes/executions`).
+- Recipe CLI for discovery, composition, execution, and history inspection.
 
 ## Quickstart
 
@@ -38,6 +41,11 @@ worldgen explore ./demo-world summary
 worldgen explore ./demo-world assertions
 worldgen explore ./demo-world proposals
 worldgen review ./demo-world conflicts
+worldgen recipe list ./demo-world
+worldgen recipe compose ./demo-world discover-domains
+worldgen recipe run ./demo-world seed-foundation --inputs-json '{"perspective":"personal","purpose":"Build a traceable world","boundaries":["fixtures"],"principles":["evidence always"],"discovery_agenda":["ingest and reconcile"]}'
+worldgen recipe run ./demo-world ingest-source --inputs-json '{"source_type":"chatgpt_export","source_name":"chatgpt fixture","source_path":"./tests/fixtures/chatgpt_export","origin":"fixture://chatgpt"}'
+worldgen recipe history ./demo-world
 ```
 
 ## Testing

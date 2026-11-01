@@ -3,6 +3,7 @@ from __future__ import annotations
 from pathlib import Path
 
 from .contracts import CONTRACT_VERSION
+from .recipes import ensure_recipe_catalog
 from .utils import stable_id, utc_now, write_json
 
 WORLD_DIRS = [
@@ -16,6 +17,8 @@ WORLD_DIRS = [
     "evidence",
     "contexts",
     "proposals",
+    "recipes/definitions",
+    "recipes/executions",
     "indexes/sqlite",
 ]
 
@@ -41,4 +44,5 @@ def init_world(path: Path, name: str, description: str) -> Path:
 
     (path / "sources" / "ingest-log.jsonl").touch(exist_ok=True)
     (path / ".gitignore").write_text("sources/raw/\n", encoding="utf-8")
+    ensure_recipe_catalog(path)
     return path

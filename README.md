@@ -7,8 +7,22 @@ Milestone 1 now includes a functioning local-first prototype that can initialize
 - `docs/charter.md`
 - `docs/architecture/personal-world-poc.md`
 - `docs/development/adr-0001-world-foundation-decisions.md`
+- `docs/development/adr-0002-development-context-scaffold.md`
 - `docs/data-contract-v1.md`
 - `docs/world-development-recipes.md`
+
+## Development orientation
+
+Worldgen now includes a lightweight repository-native development scaffold:
+
+- Root entrypoint: `AGENTS.md`
+- Project router: `.mex/ROUTER.md`
+- Focused context and decision index: `.mex/context/`
+- Evidence-backed patterns: `.mex/patterns/`
+- Development continuity: `.mex/continuity/`
+- Reusable workflow skill: `.agents/skills/worldgen-development/SKILL.md`
+
+This scaffold is inspired by Patternmaker concepts and adapted for Worldgen's existing architecture without introducing external runtime dependencies.
 
 ## Implementation highlights
 

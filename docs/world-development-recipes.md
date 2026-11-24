@@ -120,7 +120,7 @@ Composition is dependency-ordered and intentionally simple (no workflow engine).
 
 - **Atomicity for multi-file recipe mutations:** current implementation records failures and mutation paths, but does not implement transactional rollback for partially written files. A next step is staged writes with commit/abort semantics.
 - **Execution ordering visibility:** history is persisted per execution record, but not additionally indexed; this is acceptable for filesystem-native scope, but could later use a derived index table.
-- **Model metadata policy:** contract supports model metadata capture, but model-assisted recipe implementations are still planned.
+- **Model metadata policy:** `ingest-source` can optionally call LiteLLM when `model` is supplied. That output stays at `interpretation_level=interpretation` and is not auto-accepted. Other model-assisted recipes remain planned.
 
 ## 9) Recommendation for next recipe implementation
 

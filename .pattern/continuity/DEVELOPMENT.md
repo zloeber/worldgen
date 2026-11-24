@@ -39,3 +39,18 @@ Primary references:
 - `.pattern/`
 - `.agents/skills/worldgen-development/SKILL.md`
 - `docs/development/adr-0002-development-context-scaffold.md`
+
+## 2026-11-23 — Click CLI, uv packaging, and ChatGPT export processing
+
+- Replaced the argparse CLI with Click while keeping the existing command surface.
+- Added a hatchling build backend so `uv sync` and `uv build` install and package the app.
+- Extended ChatGPT ingestion to directories, JSON files, split conversation files, and zip exports, including non-text parts and unix timestamps.
+- Added optional LiteLLM interpretation for a configured model, including a network Ollama server. Deterministic ingest remains the default.
+- Stopped writing null `valid_until` so ingested assertions satisfy the contract.
+
+Primary references:
+- `src/worldgen/cli.py`
+- `src/worldgen/adapters.py`
+- `src/worldgen/models.py`
+- `src/worldgen/ingest.py`
+- `docs/development/adr-0003-click-uv-and-optional-litellm.md`

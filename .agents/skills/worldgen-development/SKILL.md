@@ -29,7 +29,7 @@ Use this workflow to perform substantial Worldgen repository work without drifti
 
 4. **Apply and verify**
    - Implement focused changes.
-   - Run full test suite (`PYTHONPATH=src python -m pytest`) unless the work is docs-only.
+   - Run full test suite (`uv run pytest`) unless the work is docs-only.
    - Avoid silent behavior shifts; update tests when behavior intentionally changes.
 
 5. **Maintain development knowledge**

@@ -8,6 +8,9 @@
 - `docs/development/adr-0002-development-context-scaffold.md`  
   Development guidance scaffold decision: lightweight `.pattern/` context + continuity + patterns and `worldgen-development` skill; no Patternmaker runtime dependency; no development-bootstrap world recipe.
 
+- `docs/development/adr-0003-click-uv-and-optional-litellm.md`  
+  Click CLI, uv/hatchling packaging, real ChatGPT export layouts, and optional LiteLLM interpretation aimed at a network Ollama server. Default ingestion stays deterministic.
+
 ## Decision status notes
 
 - **Established implementation:** what is in `src/worldgen/` + tests.

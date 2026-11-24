@@ -16,10 +16,10 @@ Milestone 1 now includes a functioning local-first prototype that can initialize
 Worldgen now includes a lightweight repository-native development scaffold:
 
 - Root entrypoint: `AGENTS.md`
-- Project router: `.mex/ROUTER.md`
-- Focused context and decision index: `.mex/context/`
-- Evidence-backed patterns: `.mex/patterns/`
-- Development continuity: `.mex/continuity/`
+- Project router: `.pattern/ROUTER.md`
+- Focused context and decision index: `.pattern/context/`
+- Evidence-backed patterns: `.pattern/patterns/`
+- Development continuity: `.pattern/continuity/`
 - Reusable workflow skill: `.agents/skills/worldgen-development/SKILL.md`
 
 This scaffold is inspired by Patternmaker concepts and adapted for Worldgen's existing architecture without introducing external runtime dependencies.

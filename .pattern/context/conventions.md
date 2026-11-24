@@ -17,11 +17,11 @@
 ## Documentation conventions
 
 - Keep durable architecture decisions in ADRs under `docs/development/`.
-- Keep `.mex/context/*` focused and link to canonical docs instead of duplicating them.
-- Keep `.mex/patterns/*` evidence-backed and repository-specific.
+- Keep `.pattern/context/*` focused and link to canonical docs instead of duplicating them.
+- Keep `.pattern/patterns/*` evidence-backed and repository-specific.
 - Keep continuity split between:
-  - current snapshot (`.mex/continuity/CURRENT.md`)
-  - chronological milestones (`.mex/continuity/DEVELOPMENT.md`)
+  - current snapshot (`.pattern/continuity/CURRENT.md`)
+  - chronological milestones (`.pattern/continuity/DEVELOPMENT.md`)
 
 ## Agent workflow conventions
 

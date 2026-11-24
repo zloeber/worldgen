@@ -12,7 +12,7 @@ Milestone 1 implementation baseline is active. Current objective is to evolve im
 
 ## Recently completed work
 
-- Added repository-native development scaffold: root `AGENTS.md`, `.mex` router/context/patterns/continuity, and `worldgen-development` skill.
+- Added repository-native development scaffold: root `AGENTS.md`, `.pattern` router/context/patterns/continuity, and `worldgen-development` skill.
 - Added ADR 0002 documenting development-context governance and recipe-system boundary decision.
 
 ## Active architectural decisions

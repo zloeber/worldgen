@@ -29,13 +29,13 @@ Primary references:
 
 ## 2026-11-01 — Development context bootstrap added
 
-- Added root `AGENTS.md` and `.mex/ROUTER.md` to standardize session orientation.
+- Added root `AGENTS.md` and `.pattern/ROUTER.md` to standardize session orientation.
 - Added focused context, continuity, and pattern documents grounded in current implementation.
 - Added `worldgen-development` reusable skill for orientation, evidence-backed updates, and continuity maintenance.
 - Accepted ADR 0002: use skill/workflow for repository maintenance, not a world recipe.
 
 Primary references:
 - `AGENTS.md`
-- `.mex/`
+- `.pattern/`
 - `.agents/skills/worldgen-development/SKILL.md`
 - `docs/development/adr-0002-development-context-scaffold.md`

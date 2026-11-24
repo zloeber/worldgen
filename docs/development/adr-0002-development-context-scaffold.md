@@ -17,10 +17,10 @@ Patternmaker provides useful ideas (small routing surface, context files, patter
 Adopt a lightweight repository-native development scaffold:
 
 - Root `AGENTS.md` as concise always-loaded entrypoint.
-- `.mex/ROUTER.md` as orientation router.
-- Focused context files under `.mex/context/`.
-- Evidence-backed implementation patterns under `.mex/patterns/`.
-- Continuity documents under `.mex/continuity/`.
+- `.pattern/ROUTER.md` as orientation router.
+- Focused context files under `.pattern/context/`.
+- Evidence-backed implementation patterns under `.pattern/patterns/`.
+- Continuity documents under `.pattern/continuity/`.
 - Reusable workflow skill at `.agents/skills/worldgen-development/SKILL.md`.
 
 Also decide that development bootstrap/maintenance is **not** a Worldgen recipe at this stage.

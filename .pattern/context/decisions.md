@@ -6,7 +6,10 @@
   Milestone 1 foundation decisions: canonical format, contract versioning, raw-source handling, idempotent ingestion, derived SQLite index, proposal methods, claim-state separation.
 
 - `docs/development/adr-0002-development-context-scaffold.md`  
-  Development guidance scaffold decision: lightweight `.mex/` context + continuity + patterns and `worldgen-development` skill; no Patternmaker runtime dependency; no development-bootstrap world recipe.
+  Development guidance scaffold decision: lightweight `.pattern/` context + continuity + patterns and `worldgen-development` skill; no Patternmaker runtime dependency; no development-bootstrap world recipe.
+
+- `docs/development/adr-0003-click-uv-and-optional-litellm.md`  
+  Click CLI, uv/hatchling packaging, real ChatGPT export layouts, and optional LiteLLM interpretation aimed at a network Ollama server. Default ingestion stays deterministic.
 
 ## Decision status notes
 

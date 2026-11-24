@@ -42,7 +42,17 @@ tasks:
         print('project config ok')
         PY
 
-  test:
-    desc: Run milestone 1 synthetic fixture tests
+  sync:
+    desc: Install project dependencies with uv
     cmds:
-      - PYTHONPATH=src python -m pytest
+      - uv sync
+
+  build:
+    desc: Build the sdist and wheel with uv
+    cmds:
+      - uv build
+
+  test:
+    desc: Run the test suite in the uv environment
+    cmds:
+      - uv run pytest

@@ -2,4 +2,4 @@
 python = "3.12"
 uv = "latest"
 task = "3.40.1"
-"patternmaker" = "github:zloeber/patternmaker"
+#"patternmaker" = "github:zloeber/patternmaker"

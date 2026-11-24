@@ -5,6 +5,7 @@ from pathlib import Path
 from typing import Any
 
 from .ingest import ingest_source
+from .models import ModelConfig
 from .proposals import generate_domain_proposals
 from .utils import read_json, stable_id, utc_now, write_json
 
@@ -90,7 +91,7 @@ def initial_recipe_catalog() -> list[dict[str, Any]]:
             "implementation_status": "implemented",
             "inputs": {
                 "required": ["source_type", "source_name", "source_path", "origin"],
-                "optional": [],
+                "optional": ["model", "model_api_base"],
             },
             "prerequisites": ["world package initialized", "source path exists"],
             "outputs": ["Source record", "Observation records", "Evidence records", "candidate Entity/Relationship/Assertion records"],
@@ -100,7 +101,9 @@ def initial_recipe_catalog() -> list[dict[str, Any]]:
                 "idempotency check by source hash",
                 "stable id generation",
             ],
-            "model_assisted_operations": [],
+            "model_assisted_operations": [
+                "optional LiteLLM interpretation of ingested observations into candidate assertions",
+            ],
             "validation_requirements": ["resulting records pass world contract validation"],
             "evidence_and_provenance_requirements": [
                 "preserve source manifest and raw source snapshot",
@@ -122,7 +125,7 @@ def initial_recipe_catalog() -> list[dict[str, Any]]:
             ],
             "reproducibility": {
                 "deterministic": True,
-                "notes": "For identical source content and world state, ingestion is deterministic.",
+                "notes": "Parsing, hashing, and heuristic extraction are deterministic for identical source content. Optional LiteLLM interpretation is candidate-only, recorded with model metadata, and skipped once completed for that model.",
             },
             "depends_on": ["seed-foundation"],
         },
@@ -485,12 +488,22 @@ def _run_seed_foundation(world_path: Path, inputs: dict[str, Any]) -> dict[str, 
 
 
 def _run_ingest_source(world_path: Path, inputs: dict[str, Any]) -> dict[str, Any]:
+    model = None
+    if inputs.get("model"):
+        api_base = str(inputs.get("model_api_base") or "").strip() or None
+        model = ModelConfig(model=str(inputs["model"]), api_base=api_base)
+        inputs["model_metadata"] = {
+            "provider": "litellm",
+            "model": model.model,
+            "api_base": model.api_base,
+        }
     result = ingest_source(
         world_path=world_path,
         source_type=str(inputs["source_type"]),
         source_name=str(inputs["source_name"]),
         source_path=Path(str(inputs["source_path"])),
         origin=str(inputs["origin"]),
+        model=model,
     )
     return {"ingest_result": result, "source_id": stable_id("source", str(inputs["source_type"]), str(inputs["source_name"]), str(inputs["origin"]))}
 

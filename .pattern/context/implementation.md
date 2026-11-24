@@ -4,12 +4,13 @@
 
 - `src/worldgen/world.py`: world package initialization and required directory scaffold.
 - `src/worldgen/ingest.py`: source registration, idempotent ingestion, record creation pipeline.
-- `src/worldgen/adapters.py`: source-specific extractors for ChatGPT export and markdown repositories.
+- `src/worldgen/adapters.py`: source-specific extractors for ChatGPT export (directory, JSON file, or zip, including split conversation files) and markdown repositories.
+- `src/worldgen/models.py`: optional LiteLLM client for model-assisted interpretation. No model is contacted unless one is configured.
 - `src/worldgen/contracts.py` + `src/worldgen/schemas.py`: contract validation and referential integrity checks.
 - `src/worldgen/indexer.py`: deterministic rebuild of derived SQLite index.
 - `src/worldgen/proposals.py`: deterministic proposal generation for organizational domains.
 - `src/worldgen/recipes.py`: recipe contract/catalog, dependency composition, execution lifecycle records.
-- `src/worldgen/cli.py`: CLI surface for init/ingest/validate/index/propose/explore/review and recipe commands.
+- `src/worldgen/cli.py`: Click CLI for init/ingest/validate/index/propose/explore/review and recipe commands. Ingest accepts an optional LiteLLM model and API base.
 
 ## Boundary notes
 

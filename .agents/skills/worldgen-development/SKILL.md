@@ -15,26 +15,26 @@ Use this workflow to perform substantial Worldgen repository work without drifti
 ## Workflow
 
 1. **Orient**
-   - Read `AGENTS.md` then `.mex/ROUTER.md`.
-   - Read `.mex/continuity/CURRENT.md`.
-   - Load only relevant files from `.mex/context/`, `.mex/patterns/`, `src/worldgen/`, `tests/`, and ADRs.
+   - Read `AGENTS.md` then `.pattern/ROUTER.md`.
+   - Read `.pattern/continuity/CURRENT.md`.
+   - Load only relevant files from `.pattern/context/`, `.pattern/patterns/`, `src/worldgen/`, `tests/`, and ADRs.
 
 2. **Ground in implementation**
    - Inspect actual source and tests before editing.
    - Treat implemented behavior and tests as authoritative over proposals.
 
 3. **Check decisions and conventions**
-   - Confirm alignment with `.mex/context/conventions.md` and `.mex/context/decisions.md`.
+   - Confirm alignment with `.pattern/context/conventions.md` and `.pattern/context/decisions.md`.
    - If the change conflicts with an accepted ADR, explicitly surface and document the conflict.
 
 4. **Apply and verify**
    - Implement focused changes.
-   - Run full test suite (`PYTHONPATH=src python -m pytest`) unless the work is docs-only.
+   - Run full test suite (`uv run pytest`) unless the work is docs-only.
    - Avoid silent behavior shifts; update tests when behavior intentionally changes.
 
 5. **Maintain development knowledge**
-   - Update `.mex/continuity/CURRENT.md` after substantial work.
-   - Append durable milestones/decisions to `.mex/continuity/DEVELOPMENT.md`.
+   - Update `.pattern/continuity/CURRENT.md` after substantial work.
+   - Append durable milestones/decisions to `.pattern/continuity/DEVELOPMENT.md`.
    - Update context/pattern files only when supported by current repository evidence.
 
 6. **Report outcome**
